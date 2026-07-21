@@ -72,12 +72,12 @@
 }
 
 .btn-confirm {
-  background-color: #667eea;
-  color: white;
+  background-color: #00DD00;
+  color: #000000;
 }
 
 .btn-confirm:hover:not(:disabled) {
-  background-color: #764ba2;
+  background-color: #00AA00;
 }
 
 .btn:disabled {

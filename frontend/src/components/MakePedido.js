@@ -4,10 +4,24 @@ import '../styles/MakePedido.css';
 function MakePedido({ productos, categorias, onBack, onProcesarPedido }) {
   const [selectedCategory, setSelectedCategory] = React.useState(null);
   const [quantities, setQuantities] = React.useState({});
+  const [searchTerm, setSearchTerm] = React.useState('');
 
-  const productosFiltrados = selectedCategory
-    ? productos.filter(p => p.categoria === selectedCategory)
-    : productos;
+  const productosFiltrados = React.useMemo(() => {
+    let filtered = selectedCategory
+      ? productos.filter(p => p.categoria === selectedCategory)
+      : productos;
+
+    // Si hay término de búsqueda, filtrar por nombre o descripción
+    if (searchTerm.trim()) {
+      const term = searchTerm.toLowerCase();
+      filtered = filtered.filter(p =>
+        p.nombre.toLowerCase().includes(term) ||
+        (p.descripcion && p.descripcion.toLowerCase().includes(term))
+      );
+    }
+
+    return filtered;
+  }, [selectedCategory, searchTerm, productos]);
 
   const handleQuantityChange = (id, value) => {
     const numValue = Math.max(0, parseInt(value) || 0);
@@ -77,12 +91,35 @@ function MakePedido({ productos, categorias, onBack, onProcesarPedido }) {
           })}
         </div>
 
-        <div className="products-grid">
+        <div className="products-container">
+          {!selectedCategory && (
+            <div className="search-box">
+              <input
+                type="text"
+                placeholder="🔍 Buscar producto por nombre o descripción..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="search-input"
+              />
+            </div>
+          )}
+
+          <div className="products-grid">
           {productosFiltrados.length === 0 ? (
-            <p className="no-products">No hay productos en esta categoría</p>
+            <p className="no-products">
+              {searchTerm.trim()
+                ? `No se encontraron productos con "${searchTerm}"`
+                : 'No hay productos en esta categoría'}
+            </p>
           ) : (
             productosFiltrados.map(producto => (
               <div key={producto.id} className="product-card">
+                {producto.foto_url && (
+                  <div className="product-image">
+                    <img src={`http://localhost:5000${producto.foto_url}`} alt={producto.nombre} />
+                  </div>
+                )}
+                
                 <div className="product-header">
                   <span className="category-badge">{producto.categoria}</span>
                 </div>
@@ -115,6 +152,7 @@ function MakePedido({ productos, categorias, onBack, onProcesarPedido }) {
               </div>
             ))
           )}
+          </div>
         </div>
       </div>
 

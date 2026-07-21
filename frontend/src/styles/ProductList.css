@@ -30,14 +30,14 @@
 }
 
 .category-btn:hover {
-  border-color: #007bff;
-  color: #007bff;
+  border-color: #00DD00;
+  color: #00DD00;
 }
 
 .category-btn.active {
-  background-color: #007bff;
-  color: white;
-  border-color: #007bff;
+  background-color: #00DD00;
+  color: #000000;
+  border-color: #00DD00;
 }
 
 .products-grid {
@@ -79,8 +79,8 @@
 .category-badge {
   display: inline-block;
   padding: 4px 10px;
-  background-color: #e7f3ff;
-  color: #007bff;
+  background-color: #e0ffe0;
+  color: #00AA00;
   border-radius: 12px;
   font-size: 12px;
   font-weight: 600;

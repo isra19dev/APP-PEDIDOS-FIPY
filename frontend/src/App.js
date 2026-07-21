@@ -3,13 +3,15 @@ import './App.css';
 import Home from './components/Home';
 import MakePedido from './components/MakePedido';
 import ProductForm from './components/ProductForm';
+import AddCategory from './components/AddCategory';
 import DeleteProduct from './components/DeleteProduct';
+import EditProduct from './components/EditProduct';
 import ConfirmModal from './components/ConfirmModal';
-import { productosAPI } from './services/api';
+import { productosAPI, categoriasAPI } from './services/api';
 import { generarPedidoPDF } from './utils/pdfGenerator';
 
 function App() {
-  const [screen, setScreen] = useState('home'); // home, makePedido, addProduct, deleteProduct
+  const [screen, setScreen] = useState('home'); // home, makePedido, addProduct, addCategory, editProduct, deleteProduct
   const [productos, setProductos] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -29,7 +31,7 @@ function App() {
       
       const [productosRes, categoriasRes] = await Promise.all([
         productosAPI.obtenerTodos(),
-        productosAPI.obtenerCategorias(),
+        categoriasAPI.obtenerTodas(),
       ]);
 
       setProductos(productosRes.data);
@@ -53,6 +55,17 @@ function App() {
     }
   };
 
+  const handleAddCategory = async (categoria) => {
+    try {
+      await categoriasAPI.crear(categoria);
+      await cargarDatos();
+      setScreen('home');
+    } catch (err) {
+      console.error('Error al crear categoría:', err);
+      setError('Error al crear la categoría');
+    }
+  };
+
   const handleDeleteProduct = async (id) => {
     try {
       await productosAPI.eliminar(id);
@@ -60,6 +73,17 @@ function App() {
     } catch (err) {
       console.error('Error al eliminar producto:', err);
       setError('Error al eliminar el producto');
+    }
+  };
+
+  const handleEditProduct = async (id, formData) => {
+    try {
+      await productosAPI.actualizar(id, formData);
+      await cargarDatos();
+      // Se queda en la pantalla de editProduct en lugar de volver a home
+    } catch (err) {
+      console.error('Error al editar producto:', err);
+      setError('Error al editar el producto');
     }
   };
 
@@ -119,7 +143,16 @@ function App() {
         <Home
           onMakePedido={() => setScreen('makePedido')}
           onAddProduct={() => setScreen('addProduct')}
+          onAddCategory={() => setScreen('addCategory')}
+          onEditProduct={() => setScreen('editProduct')}
           onDeleteProduct={() => setScreen('deleteProduct')}
+        />
+      )}
+
+      {screen === 'addCategory' && (
+        <AddCategory
+          onSubmit={handleAddCategory}
+          onCancel={() => setScreen('home')}
         />
       )}
 
@@ -144,9 +177,19 @@ function App() {
             <ProductForm
               onSubmit={handleAddProduct}
               onCancel={() => setScreen('home')}
+              categorias={categorias}
             />
           </div>
         </div>
+      )}
+
+      {screen === 'editProduct' && (
+        <EditProduct
+          productos={productos}
+          categorias={categorias}
+          onBack={() => setScreen('home')}
+          onEdit={handleEditProduct}
+        />
       )}
 
       {screen === 'deleteProduct' && (

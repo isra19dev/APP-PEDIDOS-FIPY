@@ -35,12 +35,12 @@ class Producto {
   }
 
   // Crear un nuevo producto
-  static async crear(nombre, categoria, precio, descripcion, cantidad_minima) {
+  static async crear(nombre, categoria, precio, descripcion, cantidad_minima, foto_url) {
     try {
       const result = await pool.query(
-        `INSERT INTO productos (nombre, categoria, precio, descripcion, cantidad_minima)
-         VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-        [nombre, categoria, precio, descripcion, cantidad_minima]
+        `INSERT INTO productos (nombre, categoria, precio, descripcion, cantidad_minima, foto_url)
+         VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+        [nombre, categoria, precio, descripcion, cantidad_minima, foto_url]
       );
       return result.rows[0];
     } catch (error) {
@@ -49,13 +49,13 @@ class Producto {
   }
 
   // Actualizar un producto
-  static async actualizar(id, nombre, categoria, precio, descripcion, cantidad_minima) {
+  static async actualizar(id, nombre, categoria, precio, descripcion, cantidad_minima, foto_url) {
     try {
       const result = await pool.query(
         `UPDATE productos 
-         SET nombre = $1, categoria = $2, precio = $3, descripcion = $4, cantidad_minima = $5, updated_at = CURRENT_TIMESTAMP
-         WHERE id = $6 RETURNING *`,
-        [nombre, categoria, precio, descripcion, cantidad_minima, id]
+         SET nombre = $1, categoria = $2, precio = $3, descripcion = $4, cantidad_minima = $5, foto_url = $6, updated_at = CURRENT_TIMESTAMP
+         WHERE id = $7 RETURNING *`,
+        [nombre, categoria, precio, descripcion, cantidad_minima, foto_url, id]
       );
       return result.rows[0];
     } catch (error) {

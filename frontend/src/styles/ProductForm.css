@@ -40,8 +40,8 @@
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+  border-color: #00DD00;
+  box-shadow: 0 0 0 3px rgba(0, 221, 0, 0.2);
 }
 
 .form-group .error {
@@ -72,12 +72,12 @@
 }
 
 .btn-primary {
-  background-color: #007bff;
-  color: white;
+  background-color: #00DD00;
+  color: #000000;
 }
 
 .btn-primary:hover {
-  background-color: #0056b3;
+  background-color: #00AA00;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
@@ -89,4 +89,20 @@
 
 .btn-secondary:hover {
   background-color: #545b62;
+}
+
+.foto-preview {
+  margin-top: 10px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: white;
+  padding: 5px;
+}
+
+.foto-preview img {
+  width: 100%;
+  height: auto;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 2px;
 }

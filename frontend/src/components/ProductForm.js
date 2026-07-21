@@ -1,24 +1,42 @@
 import React, { useState } from 'react';
 import '../styles/ProductForm.css';
 
-function ProductForm({ onSubmit, initialData, onCancel }) {
+function ProductForm({ onSubmit, initialData, onCancel, categorias = [] }) {
   const [formData, setFormData] = useState(
     initialData || {
       nombre: '',
-      categoria: 'Carnes',
+      categoria: categorias.length > 0 ? categorias[0] : '',
       descripcion: '',
-      cantidad_minima: 0,
+      foto: null,
     }
   );
+
+  const [fotoPreview, setFotoPreview] = useState(initialData?.foto_url || null);
 
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: name === 'precio' || name === 'cantidad_minima' ? Number(value) : value,
-    });
+    const { name, value, files } = e.target;
+    
+    if (name === 'foto' && files) {
+      const file = files[0];
+      setFormData({
+        ...formData,
+        foto: file,
+      });
+      
+      // Crear preview de la imagen
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFotoPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
   };
 
   const validateForm = () => {
@@ -64,17 +82,18 @@ function ProductForm({ onSubmit, initialData, onCancel }) {
           value={formData.categoria}
           onChange={handleChange}
         >
-          <option value="Corte">Corte</option>
-          <option value="Carnes">Carnes</option>
-          <option value="Pan">Pan</option>
-          <option value="Varios">Varios</option>
+          {categorias.map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
+          ))}
         </select>
         {errors.categoria && <span className="error">{errors.categoria}</span>}
       </div>
 
       <div className="form-group">
-        <label htmlFor="precio">Precio (€)</label>
-        <input
+        <label htmlFor="descripcion">Descripción</label>
+        <textarea
           id="descripcion"
           name="descripcion"
           value={formData.descripcion}
@@ -85,15 +104,19 @@ function ProductForm({ onSubmit, initialData, onCancel }) {
       </div>
 
       <div className="form-group">
-        <label htmlFor="cantidad_minima">Cantidad Mínima</label>
+        <label htmlFor="foto">Foto del Producto</label>
         <input
-          type="number"
-          id="cantidad_minima"
-          name="cantidad_minima"
-          value={formData.cantidad_minima}
+          type="file"
+          id="foto"
+          name="foto"
           onChange={handleChange}
-          min="0"
+          accept="image/*"
         />
+        {fotoPreview && (
+          <div className="foto-preview">
+            <img src={fotoPreview} alt="Preview" />
+          </div>
+        )}
       </div>
 
       <div className="form-buttons">

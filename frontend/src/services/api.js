@@ -22,14 +22,45 @@ export const productosAPI = {
   // Obtener todas las categorías
   obtenerCategorias: () => apiClient.get('/productos/categorias'),
 
-  // Crear un nuevo producto
-  crear: (datos) => apiClient.post('/productos', datos),
+  // Crear un nuevo producto (con FormData para la imagen)
+  crear: (datos) => {
+    const formData = new FormData();
+    formData.append('nombre', datos.nombre);
+    formData.append('categoria', datos.categoria);
+    formData.append('descripcion', datos.descripcion);
+    if (datos.foto) {
+      formData.append('foto', datos.foto);
+    }
+    return axios.post(`${API_BASE_URL}/productos`, formData);
+  },
 
-  // Actualizar un producto
-  actualizar: (id, datos) => apiClient.put(`/productos/${id}`, datos),
+  // Actualizar un producto (con FormData para la imagen)
+  actualizar: (id, datos) => {
+    const formData = new FormData();
+    formData.append('nombre', datos.nombre);
+    formData.append('categoria', datos.categoria);
+    formData.append('descripcion', datos.descripcion);
+    if (datos.foto_url) {
+      formData.append('foto_url', datos.foto_url);
+    }
+    if (datos.foto) {
+      formData.append('foto', datos.foto);
+    }
+    return axios.put(`${API_BASE_URL}/productos/${id}`, formData);
+  },
 
   // Eliminar un producto
   eliminar: (id) => apiClient.delete(`/productos/${id}`),
+};
+
+export const categoriasAPI = {
+  // Crear una nueva categoría
+  crear: (categoria) => {
+    return axios.post(`${API_BASE_URL}/categorias`, { categoria });
+  },
+
+  // Obtener todas las categorías
+  obtenerTodas: () => apiClient.get('/categorias'),
 };
 
 export default apiClient;

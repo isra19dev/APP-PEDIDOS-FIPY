@@ -6,7 +6,7 @@
 }
 
 .delete-product-header {
-  background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+  background: linear-gradient(135deg, #FF0000 0%, #FF6600 100%);
   color: white;
   padding: 20px;
   display: flex;
@@ -35,7 +35,7 @@
 
 .back-btn:hover {
   background: white;
-  color: #f5576c;
+  color: #FF0000;
 }
 
 .delete-product-content {
@@ -84,14 +84,14 @@
 }
 
 .category-btn:hover {
-  border-color: #f5576c;
-  color: #f5576c;
+  border-color: #FF0000;
+  color: #FF0000;
 }
 
 .category-btn.active {
-  background-color: #f5576c;
+  background-color: #FF0000;
   color: white;
-  border-color: #f5576c;
+  border-color: #FF0000;
 }
 
 .products-list {
@@ -114,7 +114,7 @@
 
 .product-item:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-  border-color: #f5576c;
+  border-color: #FF0000;
 }
 
 .product-info {
@@ -127,8 +127,8 @@
 .category-badge {
   display: inline-block;
   padding: 4px 10px;
-  background-color: #ffe7eb;
-  color: #f5576c;
+  background-color: #ffe0e0;
+  color: #FF0000;
   border-radius: 12px;
   font-size: 11px;
   font-weight: 700;
@@ -143,7 +143,7 @@
 }
 
 .delete-btn {
-  background-color: #f5576c;
+  background-color: #FF0000;
   color: white;
   border: none;
   padding: 8px 16px;
@@ -156,7 +156,7 @@
 }
 
 .delete-btn:hover {
-  background-color: #e83b52;
+  background-color: #CC0000;
   transform: scale(1.05);
 }
 

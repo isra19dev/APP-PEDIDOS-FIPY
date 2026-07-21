@@ -1,7 +1,7 @@
 import React from 'react';
 import '../styles/Home.css';
 
-function Home({ onMakePedido, onAddProduct, onDeleteProduct }) {
+function Home({ onMakePedido, onAddProduct, onDeleteProduct, onEditProduct, onAddCategory }) {
   return (
     <div className="home-container">
       <div className="home-content">
@@ -19,6 +19,18 @@ function Home({ onMakePedido, onAddProduct, onDeleteProduct }) {
             <div className="icon">➕</div>
             <h2>Añadir Producto</h2>
             <p>Agrega nuevos productos a la base de datos</p>
+          </button>
+
+          <button className="option-btn add-category" onClick={onAddCategory}>
+            <div className="icon">📂</div>
+            <h2>Añadir Categoría</h2>
+            <p>Crea nuevas categorías de productos</p>
+          </button>
+
+          <button className="option-btn edit-product" onClick={onEditProduct}>
+            <div className="icon">✏️</div>
+            <h2>Editar Producto</h2>
+            <p>Modifica la información de los productos</p>
           </button>
 
           <button className="option-btn delete-product" onClick={onDeleteProduct}>

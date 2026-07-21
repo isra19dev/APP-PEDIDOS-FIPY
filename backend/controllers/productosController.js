@@ -41,17 +41,26 @@ exports.obtenerPorId = async (req, res) => {
 // Crear un nuevo producto
 exports.crear = async (req, res) => {
   try {
+    console.log('📝 Recibida solicitud POST /productos');
+    console.log('Body:', req.body);
+    console.log('File:', req.file);
+    
     const { nombre, categoria, precio, descripcion, cantidad_minima } = req.body;
     
     if (!nombre || !categoria) {
+      console.log('❌ Validación fallida: nombre o categoría faltantes');
       return res.status(400).json({ error: 'Nombre y categoría son obligatorios' });
     }
 
-    const producto = await Producto.crear(nombre, categoria, precio, descripcion, cantidad_minima);
+    const foto_url = req.file ? `/uploads/${req.file.filename}` : null;
+    console.log('📸 Foto URL:', foto_url);
+
+    const producto = await Producto.crear(nombre, categoria, precio || null, descripcion || '', cantidad_minima || null, foto_url);
+    console.log('✅ Producto creado:', producto);
     res.status(201).json(producto);
   } catch (error) {
-    console.error('Error al crear producto:', error);
-    res.status(500).json({ error: 'Error al crear producto' });
+    console.error('❌ Error al crear producto:', error);
+    res.status(500).json({ error: 'Error al crear producto', details: error.message });
   }
 };
 
@@ -65,7 +74,9 @@ exports.actualizar = async (req, res) => {
       return res.status(400).json({ error: 'Nombre y categoría son obligatorios' });
     }
 
-    const producto = await Producto.actualizar(id, nombre, categoria, precio, descripcion, cantidad_minima);
+    const foto_url = req.file ? `/uploads/${req.file.filename}` : req.body.foto_url;
+
+    const producto = await Producto.actualizar(id, nombre, categoria, precio || null, descripcion || '', cantidad_minima || null, foto_url);
     if (!producto) {
       return res.status(404).json({ error: 'Producto no encontrado' });
     }
