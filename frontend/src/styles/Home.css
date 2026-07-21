@@ -1,0 +1,125 @@
+.home-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.home-content {
+  text-align: center;
+  color: white;
+}
+
+.home-content h1 {
+  font-size: 48px;
+  margin-bottom: 10px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.home-content p {
+  font-size: 18px;
+  margin-bottom: 50px;
+  opacity: 0.9;
+}
+
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  max-width: 1000px;
+}
+
+.option-btn {
+  background: white;
+  border: none;
+  border-radius: 12px;
+  padding: 40px 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  color: #333;
+}
+
+.option-btn:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.option-btn .icon {
+  font-size: 60px;
+}
+
+.option-btn h2 {
+  margin: 0;
+  font-size: 24px;
+  color: #333;
+}
+
+.option-btn p {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.option-btn.make-pedido:hover {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.option-btn.make-pedido:hover h2,
+.option-btn.make-pedido:hover p {
+  color: white;
+}
+
+.option-btn.add-product:hover {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+}
+
+.option-btn.add-product:hover h2,
+.option-btn.add-product:hover p {
+  color: white;
+}
+
+.option-btn.delete-product:hover {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  color: white;
+}
+
+.option-btn.delete-product:hover h2,
+.option-btn.delete-product:hover p {
+  color: white;
+}
+
+@media (max-width: 600px) {
+  .home-content h1 {
+    font-size: 32px;
+  }
+
+  .home-content p {
+    font-size: 16px;
+    margin-bottom: 30px;
+  }
+
+  .options-grid {
+    gap: 20px;
+  }
+
+  .option-btn {
+    padding: 30px 20px;
+  }
+
+  .option-btn .icon {
+    font-size: 48px;
+  }
+
+  .option-btn h2 {
+    font-size: 20px;
+  }
+}
