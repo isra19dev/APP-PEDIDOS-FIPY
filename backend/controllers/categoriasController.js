@@ -27,10 +27,12 @@ exports.crear = async (req, res) => {
 // Obtener todas las categorías
 exports.obtenerTodas = async (req, res) => {
   try {
+    console.log('📨 GET /api/categorias');
     const categorias = await Categoria.obtenerTodas();
+    console.log('✅ Enviando respuesta con categorías');
     res.json(categorias);
   } catch (error) {
-    console.error('Error al obtener categorías:', error);
-    res.status(500).json({ error: 'Error al obtener categorías' });
+    console.error('❌ Error al obtener categorías:', error.message, error.code);
+    res.status(500).json({ error: 'Error al obtener categorías', details: error.message });
   }
 };

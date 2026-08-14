@@ -3,11 +3,13 @@ const Producto = require('../models/Producto');
 // Obtener todos los productos
 exports.obtenerTodos = async (req, res) => {
   try {
+    console.log('📨 GET /api/productos');
     const productos = await Producto.obtenerTodos();
+    console.log('✅ Enviando respuesta con productos');
     res.json(productos);
   } catch (error) {
-    console.error('Error al obtener productos:', error);
-    res.status(500).json({ error: 'Error al obtener productos' });
+    console.error('❌ Error al obtener productos:', error.message, error.code);
+    res.status(500).json({ error: 'Error al obtener productos', details: error.message });
   }
 };
 
@@ -15,11 +17,13 @@ exports.obtenerTodos = async (req, res) => {
 exports.obtenerPorCategoria = async (req, res) => {
   try {
     const { categoria } = req.params;
+    console.log(`📨 GET /api/productos/categoria/${categoria}`);
     const productos = await Producto.obtenerPorCategoria(categoria);
+    console.log('✅ Enviando respuesta');
     res.json(productos);
   } catch (error) {
-    console.error('Error al obtener productos por categoría:', error);
-    res.status(500).json({ error: 'Error al obtener productos por categoría' });
+    console.error('❌ Error al obtener productos por categoría:', error.message);
+    res.status(500).json({ error: 'Error al obtener productos por categoría', details: error.message });
   }
 };
 
