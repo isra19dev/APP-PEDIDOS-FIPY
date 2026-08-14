@@ -6,10 +6,10 @@ class Categoria {
     try {
       console.log('🔍 Buscando categorías en BD...');
       const result = await pool.query(
-        'SELECT id, nombre FROM categorias ORDER BY nombre'
+        'SELECT nombre FROM categorias ORDER BY nombre'
       );
       console.log(`✅ Se encontraron ${result.rows.length} categorías`);
-      return result.rows;
+      return result.rows.map(row => row.nombre);
     } catch (error) {
       console.error('❌ Error al obtener categorías:', error.message, error.code);
       throw error;
