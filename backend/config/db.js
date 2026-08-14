@@ -98,47 +98,59 @@ async function initializeTables() {
       console.error('⚠️ Error en tabla pedidos:', err.message);
     }
 
-    // Insertar categorias si no existen
-    console.log('🌱 Insertando categorias...');
+    // Verificar si hay categorías, si no, insertar
+    console.log('🌱 Verificando categorías...');
     try {
-      await pool.query(`
-        INSERT INTO categorias (nombre) VALUES
-        ('Corte'),
-        ('Carnes'),
-        ('Pan'),
-        ('Varios')
-        ON CONFLICT (nombre) DO NOTHING
-      `);
-      console.log('✅ Categorias OK');
+      const result = await pool.query('SELECT COUNT(*) as count FROM categorias');
+      if (result.rows[0].count === 0) {
+        console.log('📝 Insertando categorías por defecto...');
+        await pool.query(`
+          INSERT INTO categorias (nombre) VALUES
+          ('Corte'),
+          ('Carnes'),
+          ('Pan'),
+          ('Varios')
+          ON CONFLICT (nombre) DO NOTHING
+        `);
+        console.log('✅ Categorias insertadas');
+      } else {
+        console.log('✅ Categorías ya existen, no se reinsertarán');
+      }
     } catch (err) {
-      console.error('⚠️ Error al insertar categorias:', err.message);
+      console.error('⚠️ Error al verificar/insertar categorías:', err.message);
     }
 
-    // Insertar productos si no existen
-    console.log('🌱 Insertando productos...');
+    // Verificar si hay productos, si no, insertar datos de ejemplo
+    console.log('🌱 Verificando productos...');
     try {
-      await pool.query(`
-        INSERT INTO productos (nombre, categoria, precio, descripcion, cantidad_minima, foto_url) VALUES
-        ('Jamón York', 'Corte', 8.50, 'Jamón de corte para sándwiches', 2, '/uploads/jamon-york.jpg'),
-        ('Cochinillo', 'Corte', 15.00, 'Cochinillo asado', 1, '/uploads/cochinillo.jpg'),
-        ('Jamón Ibérico', 'Corte', 20.00, 'Jamón ibérico de bellota', 1, '/uploads/jamon-iberico.jpg'),
-        ('Hamburguesas 180g', 'Carnes', 3.50, 'Hamburguesas premium congeladas', 20, '/uploads/hamburguesas.jpg'),
-        ('Lomo Alto', 'Carnes', 12.00, 'Lomo de primera calidad', 5, '/uploads/lomo.jpg'),
-        ('Pechuga de Pollo', 'Carnes', 5.00, 'Pechugas de pollo fresco', 10, '/uploads/pollo.jpg'),
-        ('Albóndigas', 'Carnes', 6.00, 'Albóndigas caseras', 15, '/uploads/albondigas.jpg'),
-        ('Pan FIPY Blanco', 'Pan', 2.50, 'Pan blanco de molde', 20, '/uploads/pan-blanco.jpg'),
-        ('Pan FIPY Integral', 'Pan', 3.00, 'Pan integral de molde', 15, '/uploads/pan-integral.jpg'),
-        ('Caja Bollitos', 'Pan', 4.00, 'Caja de 12 bollitos', 10, '/uploads/bollitos.jpg'),
-        ('Tenedores Plástico', 'Varios', 1.20, 'Paquete de 100 tenedores', 3, '/uploads/tenedores.jpg'),
-        ('Pajitas Plástico', 'Varios', 0.80, 'Paquete de 250 pajitas', 5, '/uploads/pajitas.jpg'),
-        ('Salsa Ketchup', 'Varios', 2.00, 'Botella de 500ml', 5, '/uploads/ketchup.jpg'),
-        ('Salsa Mayonesa', 'Varios', 2.50, 'Botella de 500ml', 5, '/uploads/mayonesa.jpg'),
-        ('Servilletas', 'Varios', 1.50, 'Paquete de 500 servilletas', 5, '/uploads/servilletas.jpg')
-        ON CONFLICT DO NOTHING
-      `);
-      console.log('✅ Productos OK');
+      const result = await pool.query('SELECT COUNT(*) as count FROM productos');
+      if (result.rows[0].count === 0) {
+        console.log('📝 Insertando productos de ejemplo...');
+        await pool.query(`
+          INSERT INTO productos (nombre, categoria, precio, descripcion, cantidad_minima, foto_url) VALUES
+          ('Jamón York', 'Corte', 8.50, 'Jamón de corte para sándwiches', 2, '/uploads/jamon-york.jpg'),
+          ('Cochinillo', 'Corte', 15.00, 'Cochinillo asado', 1, '/uploads/cochinillo.jpg'),
+          ('Jamón Ibérico', 'Corte', 20.00, 'Jamón ibérico de bellota', 1, '/uploads/jamon-iberico.jpg'),
+          ('Hamburguesas 180g', 'Carnes', 3.50, 'Hamburguesas premium congeladas', 20, '/uploads/hamburguesas.jpg'),
+          ('Lomo Alto', 'Carnes', 12.00, 'Lomo de primera calidad', 5, '/uploads/lomo.jpg'),
+          ('Pechuga de Pollo', 'Carnes', 5.00, 'Pechugas de pollo fresco', 10, '/uploads/pollo.jpg'),
+          ('Albóndigas', 'Carnes', 6.00, 'Albóndigas caseras', 15, '/uploads/albondigas.jpg'),
+          ('Pan FIPY Blanco', 'Pan', 2.50, 'Pan blanco de molde', 20, '/uploads/pan-blanco.jpg'),
+          ('Pan FIPY Integral', 'Pan', 3.00, 'Pan integral de molde', 15, '/uploads/pan-integral.jpg'),
+          ('Caja Bollitos', 'Pan', 4.00, 'Caja de 12 bollitos', 10, '/uploads/bollitos.jpg'),
+          ('Tenedores Plástico', 'Varios', 1.20, 'Paquete de 100 tenedores', 3, '/uploads/tenedores.jpg'),
+          ('Pajitas Plástico', 'Varios', 0.80, 'Paquete de 250 pajitas', 5, '/uploads/pajitas.jpg'),
+          ('Salsa Ketchup', 'Varios', 2.00, 'Botella de 500ml', 5, '/uploads/ketchup.jpg'),
+          ('Salsa Mayonesa', 'Varios', 2.50, 'Botella de 500ml', 5, '/uploads/mayonesa.jpg'),
+          ('Servilletas', 'Varios', 1.50, 'Paquete de 500 servilletas', 5, '/uploads/servilletas.jpg')
+          ON CONFLICT DO NOTHING
+        `);
+        console.log('✅ Productos de ejemplo insertados');
+      } else {
+        console.log(`✅ La BD ya tiene ${result.rows[0].count} productos, no se reinsertarán`);
+      }
     } catch (err) {
-      console.error('⚠️ Error al insertar productos:', err.message);
+      console.error('⚠️ Error al verificar/insertar productos:', err.message);
     }
 
     console.log('✅ Inicialización de tablas completada');
