@@ -6,18 +6,22 @@ import ProductForm from './components/ProductForm';
 import AddCategory from './components/AddCategory';
 import DeleteProduct from './components/DeleteProduct';
 import EditProduct from './components/EditProduct';
+import PedidosRegistry from './components/PedidosRegistry';
 import ConfirmModal from './components/ConfirmModal';
-import { productosAPI, categoriasAPI } from './services/api';
+import CopyPedidoModal from './components/CopyPedidoModal';
+import { productosAPI, categoriasAPI, pedidosAPI } from './services/api';
 import { generarPedidoPDF } from './utils/pdfGenerator';
 
 function App() {
-  const [screen, setScreen] = useState('home'); // home, makePedido, addProduct, addCategory, editProduct, deleteProduct
+  const [screen, setScreen] = useState('home'); // home, makePedido, addProduct, addCategory, editProduct, deleteProduct, pedidosRegistry
   const [productos, setProductos] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [pendingQuantities, setPendingQuantities] = useState(null);
+  const [showCopyModal, setShowCopyModal] = useState(false);
+  const [pedidoData, setPedidoData] = useState(null);
 
   // Cargar productos y categorías al montar el componente
   useEffect(() => {
@@ -92,30 +96,58 @@ function App() {
     setShowConfirmModal(true);
   };
 
-  const handleConfirmPedido = () => {
+  const handleConfirmPedido = async () => {
     if (!pendingQuantities) return;
 
     try {
       // Generar PDF
       const doc = generarPedidoPDF(productos, pendingQuantities);
       
-      // Descargar PDF
+      // Convertir PDF a base64
+      const pdfDataUrl = doc.output('datauri').split(',')[1]; // Obtener solo la parte base64
+      
+      // Preparar datos del pedido
+      const productosData = productos
+        .map(p => ({
+          id: p.id,
+          nombre: p.nombre,
+          categoria: p.categoria,
+          cantidad: pendingQuantities[p.id] || 0,
+        }))
+        .filter(p => p.cantidad > 0); // Solo productos con cantidad
+
+      // Guardar pedido en BD con PDF
+      const respuesta = await pedidosAPI.crear(productosData, '', pdfDataUrl);
+      
+      const pedidoId = respuesta.data.id;
+      const pdfUrl = respuesta.data.pdf_ruta;
+
+      // También descargar el PDF localmente
       const fecha = new Date();
       const nombreArchivo = `Pedido_FIPY_${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}-${String(fecha.getDate()).padStart(2, '0')}_${String(fecha.getHours()).padStart(2, '0')}-${String(fecha.getMinutes()).padStart(2, '0')}.pdf`;
       
       doc.save(nombreArchivo);
       
-      // Cerrar modal y volver a inicio
+      // Cerrar modal de confirmación
       setShowConfirmModal(false);
       setPendingQuantities(null);
-      setScreen('home');
       
-      // Mostrar confirmación
-      alert('✅ Pedido generado correctamente. El archivo ha sido descargado.');
+      // Mostrar modal de copiar
+      setPedidoData({
+        id: pedidoId,
+        productos: productosData,
+      });
+      setShowCopyModal(true);
     } catch (err) {
-      console.error('Error al generar PDF:', err);
-      alert('❌ Error al generar el PDF');
+      console.error('Error al generar pedido:', err);
+      alert('❌ Error al generar el pedido');
     }
+  };
+
+  const handleCloseCopyModal = () => {
+    setShowCopyModal(false);
+    setPedidoData(null);
+    setScreen('home');
   };
 
   if (loading) {
@@ -146,6 +178,7 @@ function App() {
           onAddCategory={() => setScreen('addCategory')}
           onEditProduct={() => setScreen('editProduct')}
           onDeleteProduct={() => setScreen('deleteProduct')}
+          onPedidosRegistry={() => setScreen('pedidosRegistry')}
         />
       )}
 
@@ -201,6 +234,10 @@ function App() {
         />
       )}
 
+      {screen === 'pedidosRegistry' && (
+        <PedidosRegistry onBack={() => setScreen('home')} />
+      )}
+
       {showConfirmModal && (
         <ConfirmModal
           title="Confirmar Procesamiento de Pedido"
@@ -210,6 +247,14 @@ function App() {
             setShowConfirmModal(false);
             setPendingQuantities(null);
           }}
+        />
+      )}
+
+      {showCopyModal && pedidoData && (
+        <CopyPedidoModal
+          pedidoId={pedidoData.id}
+          productos={pedidoData.productos}
+          onClose={handleCloseCopyModal}
         />
       )}
     </div>

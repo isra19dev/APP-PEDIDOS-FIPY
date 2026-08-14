@@ -1,24 +1,64 @@
 .add-category-container {
+  min-height: 100vh;
+  background: #f9f9f7;
+  display: flex;
+  flex-direction: column;
+}
+
+.add-category-header {
+  background: #00DD00;
+  color: #000;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 4px 12px rgba(0, 221, 0, 0.2);
+}
+
+.add-category-header h1 {
+  margin: 0;
+  font-size: 28px;
+  flex: 1;
+}
+
+.back-btn {
+  background: rgba(0, 0, 0, 0.1);
+  border: 2px solid #000;
+  color: #000;
+  padding: 10px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+  background: #000;
+  color: #00DD00;
+}
+
+.add-category-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 70vh;
-  padding: 20px;
-  background: linear-gradient(135deg, #00DD00 0%, #000000 100%);
+  padding: 40px 20px;
+  flex: 1;
 }
 
 .add-category-form {
   background: white;
   padding: 30px;
   border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
+  border: 2px solid #00DD00;
 }
 
 .add-category-form h3 {
   margin: 0 0 25px 0;
-  color: #333;
+  color: #00DD00;
   text-align: center;
   font-size: 1.5rem;
 }
@@ -58,7 +98,7 @@
 }
 
 .add-category-form .error {
-  color: #e74c3c;
+  color: #FF6B6B;
   font-size: 0.85rem;
   margin-top: 5px;
   display: block;
@@ -82,13 +122,14 @@
 }
 
 .add-category-form .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: #00DD00;
+  color: #000;
 }
 
 .add-category-form .btn-primary:hover:not(:disabled) {
+  background: #00FF00;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 221, 0, 0.4);
 }
 
 .add-category-form .btn-primary:disabled {
@@ -97,15 +138,160 @@
 }
 
 .add-category-form .btn-secondary {
-  background: #e0e0e0;
+  background: #f0f0f0;
   color: #333;
+  border: 2px solid #ddd;
 }
 
 .add-category-form .btn-secondary:hover:not(:disabled) {
-  background: #d0d0d0;
+  background: #e0e0e0;
+  border-color: #00DD00;
 }
 
 .add-category-form .btn-secondary:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .add-category-header {
+    padding: 15px;
+    gap: 10px;
+  }
+
+  .add-category-header h1 {
+    font-size: 22px;
+  }
+
+  .add-category-wrapper {
+    padding: 30px 15px;
+  }
+
+  .add-category-form {
+    padding: 20px;
+    max-width: 100%;
+  }
+
+  .add-category-form h3 {
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+  }
+
+  .add-category-form .form-group {
+    margin-bottom: 15px;
+  }
+
+  .add-category-form input {
+    padding: 10px;
+    font-size: 0.95rem;
+  }
+
+  .add-category-form .form-buttons {
+    gap: 8px;
+    margin-top: 20px;
+  }
+
+  .add-category-form .btn {
+    padding: 10px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .add-category-header {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .add-category-header h1 {
+    font-size: 20px;
+  }
+
+  .add-category-wrapper {
+    padding: 20px 10px;
+  }
+
+  .add-category-form {
+    padding: 15px;
+    border: 1px solid #00DD00;
+  }
+
+  .add-category-form h3 {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+  }
+
+  .add-category-form .form-group {
+    margin-bottom: 12px;
+  }
+
+  .add-category-form label {
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+  }
+
+  .add-category-form input {
+    padding: 8px;
+    font-size: 0.9rem;
+  }
+
+  .add-category-form .form-buttons {
+    gap: 6px;
+    margin-top: 15px;
+  }
+
+  .add-category-form .btn {
+    padding: 8px;
+    font-size: 0.9rem;
+  }
+
+  .back-btn {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .add-category-container {
+    padding: 10px;
+    padding-top: 15px;
+  }
+
+  .add-category-form {
+    padding: 12px;
+  }
+
+  .add-category-form h3 {
+    margin-bottom: 12px;
+    font-size: 1rem;
+  }
+
+  .add-category-form .form-group {
+    margin-bottom: 10px;
+  }
+
+  .add-category-form label {
+    margin-bottom: 5px;
+    font-size: 0.85rem;
+  }
+
+  .add-category-form input {
+    padding: 6px;
+    font-size: 0.85rem;
+  }
+
+  .add-category-form .error {
+    font-size: 0.75rem;
+  }
+
+  .add-category-form .form-buttons {
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 12px;
+  }
+
+  .add-category-form .btn {
+    padding: 6px;
+    font-size: 0.85rem;
+  }
 }

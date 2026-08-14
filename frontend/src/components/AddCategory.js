@@ -25,37 +25,46 @@ function AddCategory({ onSubmit, onCancel }) {
 
   return (
     <div className="add-category-container">
-      <form className="add-category-form" onSubmit={handleSubmit}>
-        <h3>Añadir Nueva Categoría</h3>
+      <div className="add-category-header">
+        <button className="back-btn" onClick={onCancel} disabled={loading}>
+          ← Atrás
+        </button>
+        <h1>Añadir Nueva Categoría</h1>
+      </div>
+      
+      <div className="add-category-wrapper">
+        <form className="add-category-form" onSubmit={handleSubmit}>
+          <h3>Nueva Categoría</h3>
 
-        <div className="form-group">
-          <label htmlFor="categoria">Nombre de la Categoría *</label>
-          <input
-            type="text"
-            id="categoria"
-            value={categoria}
-            onChange={handleChange}
-            placeholder="Ej: Bebidas, Postres, etc."
-            disabled={loading}
-            maxLength="50"
-          />
-          {error && <span className="error">{error}</span>}
-        </div>
+          <div className="form-group">
+            <label htmlFor="categoria">Nombre de la Categoría *</label>
+            <input
+              type="text"
+              id="categoria"
+              value={categoria}
+              onChange={handleChange}
+              placeholder="Ej: Bebidas, Postres, etc."
+              disabled={loading}
+              maxLength="50"
+            />
+            {error && <span className="error">{error}</span>}
+          </div>
 
-        <div className="form-buttons">
-          <button type="submit" className="btn btn-primary" disabled={loading}>
-            {loading ? 'Creando...' : 'Crear Categoría'}
-          </button>
-          <button 
-            type="button" 
-            className="btn btn-secondary" 
-            onClick={onCancel}
-            disabled={loading}
-          >
-            Cancelar
-          </button>
-        </div>
-      </form>
+          <div className="form-buttons">
+            <button type="submit" className="btn btn-primary" disabled={loading}>
+              {loading ? 'Creando...' : 'Crear Categoría'}
+            </button>
+            <button 
+              type="button" 
+              className="btn btn-secondary" 
+              onClick={onCancel}
+              disabled={loading}
+            >
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

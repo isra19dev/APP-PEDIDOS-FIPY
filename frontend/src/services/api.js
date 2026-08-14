@@ -63,4 +63,34 @@ export const categoriasAPI = {
   obtenerTodas: () => apiClient.get('/categorias'),
 };
 
+export const pedidosAPI = {
+  // Crear un nuevo pedido con PDF en base64
+  crear: (productos, notas = '', pdfBase64 = null) => 
+    apiClient.post('/pedidos', { productos, notas, pdfBase64 }),
+
+  // Obtener todos los pedidos
+  obtenerTodos: () => apiClient.get('/pedidos'),
+
+  // Obtener un pedido por ID (con info de edición)
+  obtenerPorId: (id) => apiClient.get(`/pedidos/${id}`),
+
+  // Obtener pedidos por rango de fechas
+  obtenerPorFechas: (fechaInicio, fechaFin) =>
+    apiClient.get('/pedidos/filtro/fechas', {
+      params: { fechaInicio, fechaFin },
+    }),
+
+  // Actualizar notas de un pedido
+  actualizarNotas: (id, notas) =>
+    apiClient.put(`/pedidos/${id}/notas`, { notas }),
+
+  // Actualizar PDF de un pedido
+  actualizarPdf: (id, pdfRuta) =>
+    apiClient.put(`/pedidos/${id}/pdf`, { pdfRuta }),
+
+  // Eliminar un pedido
+  eliminar: (id) =>
+    apiClient.delete(`/pedidos/${id}`),
+};
+
 export default apiClient;

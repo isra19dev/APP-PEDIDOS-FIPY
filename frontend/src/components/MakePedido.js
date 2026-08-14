@@ -2,7 +2,7 @@ import React from 'react';
 import '../styles/MakePedido.css';
 
 function MakePedido({ productos, categorias, onBack, onProcesarPedido }) {
-  const [selectedCategory, setSelectedCategory] = React.useState(null);
+  const [selectedCategory, setSelectedCategory] = React.useState('Pan');
   const [quantities, setQuantities] = React.useState({});
   const [searchTerm, setSearchTerm] = React.useState('');
 
@@ -71,12 +71,6 @@ function MakePedido({ productos, categorias, onBack, onProcesarPedido }) {
       <div className="make-pedido-content">
         <div className="category-filter">
           <h3>Filtrar por Categoría</h3>
-          <button
-            className={`category-btn ${!selectedCategory ? 'active' : ''}`}
-            onClick={() => setSelectedCategory(null)}
-          >
-            Todos ({productos.length})
-          </button>
           {categorias.map(categoria => {
             const count = productos.filter(p => p.categoria === categoria).length;
             return (
@@ -89,6 +83,12 @@ function MakePedido({ productos, categorias, onBack, onProcesarPedido }) {
               </button>
             );
           })}
+          <button
+            className={`category-btn ${!selectedCategory ? 'active' : ''}`}
+            onClick={() => setSelectedCategory(null)}
+          >
+            Todos ({productos.length})
+          </button>
         </div>
 
         <div className="products-container">
@@ -114,40 +114,46 @@ function MakePedido({ productos, categorias, onBack, onProcesarPedido }) {
           ) : (
             productosFiltrados.map(producto => (
               <div key={producto.id} className="product-card">
-                {producto.foto_url && (
-                  <div className="product-image">
-                    <img src={`http://localhost:5000${producto.foto_url}`} alt={producto.nombre} />
-                  </div>
-                )}
-                
-                <div className="product-header">
-                  <span className="category-badge">{producto.categoria}</span>
+                <div className="product-image-wrapper">
+                  {producto.foto_url && (
+                    <img 
+                      src={`http://localhost:5000${producto.foto_url}`} 
+                      alt={producto.nombre}
+                      className="product-image"
+                    />
+                  )}
                 </div>
 
-                <h3 className="product-name">{producto.nombre}</h3>
+                <div className="product-details">
+                  <div className="product-header">
+                    <span className="product-category">{producto.categoria}</span>
+                  </div>
 
-                <div className="quantity-control">
-                  <button
-                    className="qty-btn minus"
-                    onClick={() => handleDecrement(producto.id)}
-                  >
-                    −
-                  </button>
+                  <h3 className="product-name">{producto.nombre}</h3>
 
-                  <input
-                    type="number"
-                    className="qty-input"
-                    value={quantities[producto.id] || 0}
-                    onChange={(e) => handleQuantityChange(producto.id, e.target.value)}
-                    min="0"
-                  />
+                  <div className="quantity-control">
+                    <button
+                      className="qty-btn minus"
+                      onClick={() => handleDecrement(producto.id)}
+                    >
+                      −
+                    </button>
 
-                  <button
-                    className="qty-btn plus"
-                    onClick={() => handleIncrement(producto.id)}
-                  >
-                    +
-                  </button>
+                    <input
+                      type="number"
+                      className="qty-input"
+                      value={quantities[producto.id] || 0}
+                      onChange={(e) => handleQuantityChange(producto.id, e.target.value)}
+                      min="0"
+                    />
+
+                    <button
+                      className="qty-btn plus"
+                      onClick={() => handleIncrement(producto.id)}
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
               </div>
             ))

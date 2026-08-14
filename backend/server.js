@@ -4,6 +4,7 @@ const path = require('path');
 require('dotenv').config();
 const productosRoutes = require('./routes/productos');
 const categoriasRoutes = require('./routes/categorias');
+const pedidosRoutes = require('./routes/pedidos');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -19,12 +20,14 @@ app.use((req, res, next) => {
   next();
 });
 
-// Servir archivos estáticos (imágenes)
+// Servir archivos estáticos (imágenes y PDFs)
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
+app.use('/pedidos', express.static(path.join(__dirname, 'public/pedidos')));
 
 // Rutas
 app.use('/api/productos', productosRoutes);
 app.use('/api/categorias', categoriasRoutes);
+app.use('/api/pedidos', pedidosRoutes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {
