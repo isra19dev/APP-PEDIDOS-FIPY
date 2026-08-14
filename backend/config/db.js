@@ -70,7 +70,7 @@ async function initializeTables() {
           precio DECIMAL(10, 2),
           descripcion TEXT,
           cantidad_minima INTEGER DEFAULT 0,
-          foto_url VARCHAR(500),
+          foto_url TEXT,
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )

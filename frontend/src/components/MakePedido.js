@@ -117,7 +117,7 @@ function MakePedido({ productos, categorias, onBack, onProcesarPedido }) {
                 <div className="product-image-wrapper">
                   {producto.foto_url && (
                     <img 
-                      src={`http://localhost:5000${producto.foto_url}`} 
+                      src={producto.foto_url.startsWith('data:') ? producto.foto_url : `http://localhost:5000${producto.foto_url}`} 
                       alt={producto.nombre}
                       className="product-image"
                     />

@@ -1,25 +1,8 @@
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
 
-// Crear carpeta de uploads si no existe
-const uploadsDir = path.join(__dirname, '../public/uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
-
-// Configurar almacenamiento
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadsDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const ext = path.extname(file.originalname);
-    const name = path.basename(file.originalname, ext);
-    cb(null, `${name}-${uniqueSuffix}${ext}`);
-  }
-});
+// Usar memory storage para guardar en RAM en lugar de disco
+// Esto es ideal para convertir a Base64 sin necesidad de archivos temporales
+const storage = multer.memoryStorage();
 
 // Filtro para solo aceptar imágenes
 const fileFilter = (req, file, cb) => {

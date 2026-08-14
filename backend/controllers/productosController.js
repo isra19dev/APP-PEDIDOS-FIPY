@@ -47,7 +47,7 @@ exports.crear = async (req, res) => {
   try {
     console.log('📝 Recibida solicitud POST /productos');
     console.log('Body:', req.body);
-    console.log('File:', req.file);
+    console.log('File recibido:', !!req.file);
     
     const { nombre, categoria, precio, descripcion, cantidad_minima } = req.body;
     
@@ -56,11 +56,17 @@ exports.crear = async (req, res) => {
       return res.status(400).json({ error: 'Nombre y categoría son obligatorios' });
     }
 
-    const foto_url = req.file ? `/uploads/${req.file.filename}` : null;
-    console.log('📸 Foto URL:', foto_url);
+    let foto_url = null;
+    if (req.file) {
+      // Convertir archivo a Base64
+      const base64 = req.file.buffer.toString('base64');
+      const mimeType = req.file.mimetype;
+      foto_url = `data:${mimeType};base64,${base64}`;
+      console.log('📸 Imagen convertida a Base64, tamaño:', foto_url.length, 'caracteres');
+    }
 
     const producto = await Producto.crear(nombre, categoria, precio || null, descripcion || '', cantidad_minima || null, foto_url);
-    console.log('✅ Producto creado:', producto);
+    console.log('✅ Producto creado:', producto.id);
     res.status(201).json(producto);
   } catch (error) {
     console.error('❌ Error al crear producto:', error);
@@ -78,7 +84,14 @@ exports.actualizar = async (req, res) => {
       return res.status(400).json({ error: 'Nombre y categoría son obligatorios' });
     }
 
-    const foto_url = req.file ? `/uploads/${req.file.filename}` : req.body.foto_url;
+    let foto_url = req.body.foto_url; // Mantener imagen anterior si no se carga una nueva
+    if (req.file) {
+      // Convertir archivo a Base64
+      const base64 = req.file.buffer.toString('base64');
+      const mimeType = req.file.mimetype;
+      foto_url = `data:${mimeType};base64,${base64}`;
+      console.log('📸 Imagen actualizada a Base64, tamaño:', foto_url.length, 'caracteres');
+    }
 
     const producto = await Producto.actualizar(id, nombre, categoria, precio || null, descripcion || '', cantidad_minima || null, foto_url);
     if (!producto) {
