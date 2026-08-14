@@ -1,52 +1,30 @@
-const express = require('express');
-const cors = require('cors');
-const path = require('path');
+const { Client } = require('pg');
 require('dotenv').config();
-const productosRoutes = require('./routes/productos');
-const categoriasRoutes = require('./routes/categorias');
-const pedidosRoutes = require('./routes/pedidos');
 
-const app = express();
-const PORT = process.env.PORT || 5000;
-
-// Middleware
-app.use(cors());
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
-
-// Logging para debugging
-app.use((req, res, next) => {
-  console.log(`📨 ${req.method} ${req.path}`);
-  next();
-});
-
-// Servir archivos estáticos (imágenes y PDFs)
-app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
-app.use('/pedidos', express.static(path.join(__dirname, 'public/pedidos')));
-
-// Ruta de inicialización de BD (solo en Render)
-app.post('/api/init-db', async (req, res) => {
-  const { Pool } = require('pg');
-  
-  const pool = new Pool({
+async function initializeDatabase() {
+  const client = new Client({
     connectionString: process.env.DATABASE_URL,
     ssl: { rejectUnauthorized: false },
   });
 
   try {
-    console.log('🔧 Inicializando base de datos...');
-    
+    console.log('🔧 Conectando a PostgreSQL en Render...');
+    await client.connect();
+
     // Crear tabla de categorias
-    await pool.query(`
+    console.log('📝 Creando tabla de categorias...');
+    await client.query(`
       CREATE TABLE IF NOT EXISTS categorias (
         id SERIAL PRIMARY KEY,
         nombre VARCHAR(100) NOT NULL UNIQUE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+    console.log('✅ Tabla de categorias creada');
 
     // Crear tabla de productos
-    await pool.query(`
+    console.log('📝 Creando tabla de productos...');
+    await client.query(`
       CREATE TABLE IF NOT EXISTS productos (
         id SERIAL PRIMARY KEY,
         nombre VARCHAR(255) NOT NULL,
@@ -59,9 +37,11 @@ app.post('/api/init-db', async (req, res) => {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+    console.log('✅ Tabla de productos creada');
 
     // Crear tabla de pedidos
-    await pool.query(`
+    console.log('📝 Creando tabla de pedidos...');
+    await client.query(`
       CREATE TABLE IF NOT EXISTS pedidos (
         id SERIAL PRIMARY KEY,
         productos JSONB NOT NULL,
@@ -71,9 +51,11 @@ app.post('/api/init-db', async (req, res) => {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+    console.log('✅ Tabla de pedidos creada');
 
     // Insertar categorias
-    await pool.query(`
+    console.log('🌱 Insertando categorias...');
+    await client.query(`
       INSERT INTO categorias (nombre) VALUES
       ('Corte'),
       ('Carnes'),
@@ -81,20 +63,29 @@ app.post('/api/init-db', async (req, res) => {
       ('Varios')
       ON CONFLICT (nombre) DO NOTHING
     `);
+    console.log('✅ Categorias insertadas');
 
-    // Insertar productos
-    await pool.query(`
+    // Insertar productos de ejemplo
+    console.log('🌱 Insertando productos de ejemplo...');
+    await client.query(`
       INSERT INTO productos (nombre, categoria, precio, descripcion, cantidad_minima, foto_url) VALUES
+      -- CORTE
       ('Jamón York', 'Corte', 8.50, 'Jamón de corte para sándwiches', 2, '/uploads/jamon-york.jpg'),
       ('Cochinillo', 'Corte', 15.00, 'Cochinillo asado', 1, '/uploads/cochinillo.jpg'),
       ('Jamón Ibérico', 'Corte', 20.00, 'Jamón ibérico de bellota', 1, '/uploads/jamon-iberico.jpg'),
+      
+      -- CARNES
       ('Hamburguesas 180g', 'Carnes', 3.50, 'Hamburguesas premium congeladas', 20, '/uploads/hamburguesas.jpg'),
       ('Lomo Alto', 'Carnes', 12.00, 'Lomo de primera calidad', 5, '/uploads/lomo.jpg'),
       ('Pechuga de Pollo', 'Carnes', 5.00, 'Pechugas de pollo fresco', 10, '/uploads/pollo.jpg'),
       ('Albóndigas', 'Carnes', 6.00, 'Albóndigas caseras', 15, '/uploads/albondigas.jpg'),
+      
+      -- PAN
       ('Pan FIPY Blanco', 'Pan', 2.50, 'Pan blanco de molde', 20, '/uploads/pan-blanco.jpg'),
       ('Pan FIPY Integral', 'Pan', 3.00, 'Pan integral de molde', 15, '/uploads/pan-integral.jpg'),
       ('Caja Bollitos', 'Pan', 4.00, 'Caja de 12 bollitos', 10, '/uploads/bollitos.jpg'),
+      
+      -- VARIOS
       ('Tenedores Plástico', 'Varios', 1.20, 'Paquete de 100 tenedores', 3, '/uploads/tenedores.jpg'),
       ('Pajitas Plástico', 'Varios', 0.80, 'Paquete de 250 pajitas', 5, '/uploads/pajitas.jpg'),
       ('Salsa Ketchup', 'Varios', 2.00, 'Botella de 500ml', 5, '/uploads/ketchup.jpg'),
@@ -102,43 +93,15 @@ app.post('/api/init-db', async (req, res) => {
       ('Servilletas', 'Varios', 1.50, 'Paquete de 500 servilletas', 5, '/uploads/servilletas.jpg')
       ON CONFLICT DO NOTHING
     `);
+    console.log('✅ Productos insertados');
 
-    await pool.end();
-    
-    res.json({ 
-      message: '✅ Base de datos inicializada correctamente',
-      status: 'success'
-    });
+    await client.end();
+    console.log('\n🎉 Base de datos en Render inicializada correctamente');
+
   } catch (error) {
-    console.error('❌ Error:', error.message);
-    res.status(500).json({ 
-      error: 'Error al inicializar la base de datos',
-      details: error.message 
-    });
+    console.error('❌ Error inicializando la base de datos:', error.message);
+    process.exit(1);
   }
-});
+}
 
-// Rutas
-app.use('/api/productos', productosRoutes);
-app.use('/api/categorias', categoriasRoutes);
-app.use('/api/pedidos', pedidosRoutes);
-
-// Ruta de prueba
-app.get('/', (req, res) => {
-  res.json({ message: '✅ Backend funcionando correctamente' });
-});
-
-// Manejo de rutas no encontradas
-app.use((req, res) => {
-  res.status(404).json({ error: 'Ruta no encontrada' });
-});
-
-// Manejo de errores
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Error interno del servidor' });
-});
-
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor ejecutándose en http://localhost:${PORT}`);
-});
+initializeDatabase();
