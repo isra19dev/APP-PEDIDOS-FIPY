@@ -3,8 +3,17 @@ require('dotenv').config();
 
 let pool;
 
+console.log('🔍 Verificando variables de entorno...');
+console.log(`DATABASE_URL disponible: ${!!process.env.DATABASE_URL}`);
+console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
+console.log(`PORT: ${process.env.PORT}`);
+
 // Si hay DATABASE_URL (Render), úsala; si no, usa las variables individuales
 if (process.env.DATABASE_URL) {
+  console.log('✅ Usando DATABASE_URL (Render)');
+  const dbUrl = process.env.DATABASE_URL.substring(0, 50) + '...';
+  console.log(`📍 URL de BD: ${dbUrl}`);
+  
   pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: {
@@ -12,6 +21,11 @@ if (process.env.DATABASE_URL) {
     },
   });
 } else {
+  console.log('⚠️ DATABASE_URL no encontrada, usando variables locales');
+  console.log(`DB_HOST: ${process.env.DB_HOST || 'localhost'}`);
+  console.log(`DB_PORT: ${process.env.DB_PORT || 5432}`);
+  console.log(`DB_NAME: ${process.env.DB_NAME || 'hamburgueseria_db'}`);
+  
   pool = new Pool({
     host: process.env.DB_HOST || 'localhost',
     port: process.env.DB_PORT || 5432,
@@ -22,7 +36,7 @@ if (process.env.DATABASE_URL) {
 }
 
 pool.on('error', (err) => {
-  console.error('Error en el pool de conexiones:', err);
+  console.error('❌ Error en el pool de conexiones:', err.message);
 });
 
 // Inicializar tablas automáticamente al conectarse
